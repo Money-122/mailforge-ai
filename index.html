@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MailForge AI — Cold Emails That Actually Get Replies</title>
+<meta name="description" content="AI-powered cold email generator for business owners. Get personalized emails, subject lines, and follow-up sequences in seconds." />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080B0F;
+  --bg2:#0D1117;
+  --bg3:#12181F;
+  --card:#151C25;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:#E8EDF2;
+  --muted:#6B7A8D;
+  --accent:#00D4AA;
+  --accent2:#00B892;
+  --accent-glow:rgba(0,212,170,0.15);
+  --red:#FF4F4F;
+  --yellow:#FFB800;
+  --r:14px;
+  --font-head:'Syne',sans-serif;
+  --font-body:'Instrument Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:0.4;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 2.5rem;background:rgba(8,11,15,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+.nav-right{display:flex;gap:1rem;align-items:center}
+.nav-link{color:var(--muted);text-decoration:none;font-size:14px;transition:color 0.2s}
+.nav-link:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;font-family:var(--font-body);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;outline:none}
+.btn-accent{background:var(--accent);color:#080B0F;font-weight:600}
+.btn-accent:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* HERO */
+.hero{position:relative;padding:7rem 2rem 5rem;text-align:center;max-width:860px;margin:0 auto}
+.hero-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,212,170,0.08) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);color:var(--accent);padding:5px 14px;border-radius:20px;font-size:13px;margin-bottom:2rem}
+.badge-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+h1{font-family:var(--font-head);font-size:clamp(2.8rem,6vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:1.5rem}
+h1 em{color:var(--accent);font-style:normal;position:relative}
+.hero-sub{font-size:1.15rem;color:var(--muted);max-width:520px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:14px 32px;font-size:16px;border-radius:10px}
+
+/* STATS */
+.stats-bar{display:flex;justify-content:center;gap:3rem;padding:3rem 2rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-head);font-size:2.2rem;font-weight:800;color:var(--text)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:0.05em;text-transform:uppercase}
+
+/* SECTIONS */
+.section{padding:6rem 2rem;max-width:1060px;margin:0 auto;position:relative;z-index:1}
+.section-tag{font-size:11px;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:1rem}
+.section-title{font-family:var(--font-head);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
+.section-sub{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.7}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:3rem}
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2rem;position:relative;overflow:hidden;transition:border-color 0.3s}
+.step-card:hover{border-color:var(--border2)}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
+.step-card:hover::before{opacity:1}
+.step-icon{width:44px;height:44px;background:var(--accent-glow);border:1px solid rgba(0,212,170,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem}
+.step-card h3{font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:8px}
+.step-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.step-num-big{position:absolute;bottom:-10px;right:16px;font-family:var(--font-head);font-size:5rem;font-weight:800;color:rgba(255,255,255,0.03);line-height:1}
+
+/* PRICING */
+.pricing-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:720px;margin:3rem auto 0}
+.pricing-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2.25rem;position:relative}
+.pricing-card.hot{border-color:var(--accent);background:linear-gradient(145deg,rgba(0,212,170,0.05),var(--card))}
+.hot-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#080B0F;font-size:11px;font-weight:700;padding:3px 14px;border-radius:20px;letter-spacing:0.05em;white-space:nowrap}
+.plan-name{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:0.5rem}
+.plan-desc{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+.plan-price{font-family:var(--font-head);font-size:3rem;font-weight:800;letter-spacing:-1px}
+.plan-price sup{font-size:1.2rem;vertical-align:super}
+.plan-price sub{font-size:1rem;font-weight:400;color:var(--muted)}
+.plan-features{list-style:none;margin:1.5rem 0 2rem}
+.plan-features li{font-size:14px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.plan-features li .check{color:var(--accent);font-weight:700}
+.plan-features li .cross{color:var(--muted);opacity:0.5}
+.plan-features li.dim{opacity:0.45}
+.plan-btn{width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:600}
+
+/* BUILDER SECTION */
+#app{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:6rem 2rem}
+.app-wrap{max-width:800px;margin:0 auto}
+.app-header{margin-bottom:2.5rem}
+.app-header h2{font-family:var(--font-head);font-size:2.2rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:0.5rem}
+.app-header p{color:var(--muted);font-size:15px}
+
+/* USAGE */
+.usage-pill{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:30px;padding:8px 18px;font-size:13px;color:var(--muted);margin-bottom:1.75rem}
+.usage-pill strong{color:var(--accent)}
+.usage-pill .upgrade-link{color:var(--accent);cursor:pointer;text-decoration:underline;font-size:12px}
+
+/* FORM */
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;margin-bottom:1.25rem}
+.form-section h3{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:4px}
+.form-section>p{font-size:13px;color:var(--muted);margin-bottom:1.25rem}
+.field-grid{display:grid;gap:14px}
+.field-grid.two{grid-template-columns:1fr 1fr}
+@media(max-width:560px){.field-grid.two{grid-template-columns:1fr}}
+label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;letter-spacing:0.06em;text-transform:uppercase}
+input[type=text],textarea,select{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--font-body);
+  font-size:14px;transition:border-color 0.2s;outline:none
+}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:0.5}
+input:focus,textarea:focus,select:focus{border-color:rgba(0,212,170,0.4);background:rgba(0,212,170,0.03)}
+select option{background:var(--bg3)}
+textarea{resize:vertical;min-height:90px}
+
+/* TONE SELECTOR */
+.tone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}
+.tone-opt{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all 0.2s;text-align:left}
+.tone-opt:hover{border-color:var(--border2)}
+.tone-opt.selected{border-color:var(--accent);background:var(--accent-glow)}
+.tone-opt .tone-name{font-size:13px;font-weight:500;color:var(--text)}
+.tone-opt .tone-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* GENERATE BTN */
+.generate-btn{width:100%;padding:16px;border-radius:12px;font-size:16px;font-weight:700;background:var(--accent);color:#080B0F;border:none;cursor:pointer;font-family:var(--font-head);letter-spacing:0.5px;transition:all 0.2s;margin-top:1rem}
+.generate-btn:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,170,0.2)}
+.generate-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* LOADING */
+.loading{text-align:center;padding:5rem 2rem}
+.loading-ring{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 1.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading h3{font-family:var(--font-head);font-size:1.3rem;margin-bottom:0.5rem}
+.loading p{font-size:13px;color:var(--muted)}
+
+/* RESULTS */
+.results-grid{display:grid;gap:1.25rem}
+.email-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color 0.2s}
+.email-card:hover{border-color:var(--border2)}
+.email-card-header{display:flex;justify-content:space-between;align-items:center;padding:12px 1.25rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
+.email-type{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase}
+.copy-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.email-body{padding:1.25rem;white-space:pre-wrap;font-size:14px;line-height:1.75;color:var(--text)}
+.subject-line{padding:8px 1.25rem;background:rgba(0,212,170,0.05);border-bottom:1px solid rgba(0,212,170,0.1);font-size:13px;color:var(--muted)}
+.subject-line strong{color:var(--accent);margin-right:6px}
+
+.results-actions{display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap}
+
+/* PAYWALL */
+.paywall{background:linear-gradient(145deg,rgba(0,212,170,0.06),var(--card));border:1px solid rgba(0,212,170,0.25);border-radius:var(--r);padding:3rem;text-align:center}
+.paywall h3{font-family:var(--font-head);font-size:2rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:0.75rem}
+.paywall p{color:var(--muted);font-size:15px;margin-bottom:2rem;max-width:420px;margin-left:auto;margin-right:auto}
+.paywall-perks{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:2rem}
+.perk{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;color:var(--text)}
+.perk::before{content:'✓ ';color:var(--accent)}
+
+.error-msg{color:var(--red);font-size:13px;margin-top:8px;padding:10px 14px;background:rgba(255,79,79,0.08);border:1px solid rgba(255,79,79,0.2);border-radius:8px}
+.hidden{display:none!important}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:3rem}
+.testi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
+.testi-stars{color:var(--yellow);font-size:13px;margin-bottom:10px}
+.testi-text{font-size:14px;color:var(--text);line-height:1.65;margin-bottom:1rem}
+.testi-author{font-size:12px;color:var(--muted)}
+.testi-author strong{color:var(--text);display:block;font-size:13px}
+
+/* FOOTER */
+footer{padding:3rem 2rem;border-top:1px solid var(--border);text-align:center;position:relative;z-index:1}
+footer p{font-size:13px;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none;transition:color 0.2s}
+footer a:hover{color:var(--accent)}
+.footer-links{display:flex;gap:1.5rem;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Mail<span>Forge</span> AI</div>
+  <div class="nav-right">
+    <a href="#how-it-works" class="nav-link">How it works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#app" class="btn btn-accent">Try Free →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge"><span class="badge-dot"></span> AI-Powered Cold Email Generator</div>
+  <h1>Cold emails that <em>actually</em> get replies</h1>
+  <p class="hero-sub">Stop staring at a blank screen. MailForge writes personalized, high-converting cold emails for your business in seconds — with subject lines and follow-ups included.</p>
+  <div class="hero-cta">
+    <a href="#app" class="btn btn-accent btn-hero">Generate Free Emails →</a>
+    <a href="#how-it-works" class="btn btn-ghost btn-hero">See how it works</a>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">3x</div><div class="stat-label">Higher reply rates</div></div>
+  <div class="stat-item"><div class="stat-num">60s</div><div class="stat-label">To generate a sequence</div></div>
+  <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Email variations per run</div></div>
+  <div class="stat-item"><div class="stat-num">$0</div><div class="stat-label">To get started</div></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="section-tag">How it works</div>
+  <h2 class="section-title">From blank page to inbox in 60 seconds</h2>
+  <p class="section-sub">No copywriting skills needed. Just answer a few questions about your business and who you're targeting.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-icon">🎯</div>
+      <h3>Describe your business</h3>
+      <p>Tell us what you sell, who you're reaching out to, and what you want them to do.</p>
+      <div class="step-num-big">1</div>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">⚡</div>
+      <h3>AI writes your emails</h3>
+      <p>Get 3 email variations with unique subject lines and a follow-up sequence — all tailored to your offer.</p>
+      <div class="step-num-big">2</div>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">📈</div>
+      <h3>Send and close deals</h3>
+      <p>Copy your best email, personalize the name, hit send. Watch replies land in your inbox.</p>
+      <div class="step-num-big">3</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="padding-top:0">
+  <div class="section-tag">What people say</div>
+  <h2 class="section-title">Real results from real businesses</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"I used to spend 2 hours writing cold emails. Now I generate a whole week's worth in 10 minutes. Booked 4 new clients last month."</p>
+      <div class="testi-author"><strong>Marcus T.</strong>Marketing consultant, Chicago</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The follow-up sequence alone is worth the subscription. My reply rate went from 2% to 11% in the first week."</p>
+      <div class="testi-author"><strong>Priya S.</strong>SaaS founder, Austin</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"English is my second language so cold emails were a nightmare. MailForge makes me sound like a native speaker every time."</p>
+      <div class="testi-author"><strong>Diego R.</strong>Freelance developer, Miami</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing" style="text-align:center">
+  <div class="section-tag">Pricing</div>
+  <h2 class="section-title">Start free, scale when ready</h2>
+  <p class="section-sub" style="margin:0 auto">No credit card needed to start. Upgrade when you're ready to send more.</p>
+  <div class="pricing-wrap">
+    <div class="pricing-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-desc">Perfect for testing the waters</div>
+      <div class="plan-price"><sup>$</sup>0</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> 5 email generations/month</li>
+        <li><span class="check">✓</span> 3 variations per generation</li>
+        <li><span class="check">✓</span> Subject line included</li>
+        <li class="dim"><span class="cross">✕</span> Follow-up sequences</li>
+        <li class="dim"><span class="cross">✕</span> Unlimited generations</li>
+        <li class="dim"><span class="cross">✕</span> A/B subject line testing</li>
+      </ul>
+      <a href="#app" class="btn btn-ghost plan-btn">Get started free</a>
+    </div>
+    <div class="pricing-card hot">
+      <div class="hot-badge">MOST POPULAR</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-desc">For businesses sending daily</div>
+      <div class="plan-price"><sup>$</sup>29<sub>/mo</sub></div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited generations</li>
+        <li><span class="check">✓</span> 5 variations per generation</li>
+        <li><span class="check">✓</span> Subject lines + follow-ups</li>
+        <li><span class="check">✓</span> A/B subject line testing</li>
+        <li><span class="check">✓</span> Tone & industry customization</li>
+        <li><span class="check">✓</span> Priority AI generation</li>
+      </ul>
+      <button class="btn btn-accent plan-btn" onclick="openCheckout('pro')">Start Pro — $29/mo →</button>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="app">
+  <div class="app-wrap">
+    <div class="app-header">
+      <h2>Generate your cold emails</h2>
+      <p>Fill in your details below — the more specific you are, the better the emails.</p>
+    </div>
+
+    <div class="usage-pill">
+      Free generations left: <strong id="uses-left">3</strong> of 3 &nbsp;·&nbsp;
+      <span class="upgrade-link" onclick="openCheckout('pro')">Upgrade for unlimited →</span>
+    </div>
+
+    <!-- FORM -->
+    <div id="form-area">
+      <div class="form-section">
+        <h3>Your business</h3>
+        <p>What do you sell and who are you reaching out to?</p>
+        <div class="field-grid two">
+          <div><label>Your name / company</label><input type="text" id="sender" placeholder="Jake @ GrowthLab" /></div>
+          <div><label>Your industry</label>
+            <select id="industry">
+              <option value="marketing agency">Marketing agency</option>
+              <option value="SaaS / software">SaaS / Software</option>
+              <option value="freelance development">Freelance development</option>
+              <option value="consulting">Consulting</option>
+              <option value="real estate">Real estate</option>
+              <option value="recruiting / staffing">Recruiting / Staffing</option>
+              <option value="e-commerce">E-commerce</option>
+              <option value="financial services">Financial services</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px"><label>What do you offer? (be specific)</label>
+          <textarea id="offer" placeholder="e.g. We help e-commerce brands scale their paid ads on Meta and Google. We've helped 20+ brands hit 3x ROAS..." style="min-height:75px"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Your target</h3>
+        <p>Who are you emailing and what do you want them to do?</p>
+        <div class="field-grid two">
+          <div><label>Target audience</label><input type="text" id="target" placeholder="e.g. DTC e-commerce founders doing $1M-$10M/yr" /></div>
+          <div><label>Goal of the email</label>
+            <select id="goal">
+              <option value="book a 15-minute discovery call">Book a discovery call</option>
+              <option value="reply to learn more">Get a reply</option>
+              <option value="click a link to a case study">Click a case study</option>
+              <option value="sign up for a free trial">Sign up for free trial</option>
+              <option value="schedule a demo">Schedule a demo</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px"><label>Any specific pain point to mention? (optional)</label>
+          <input type="text" id="pain" placeholder="e.g. Most brands waste 40% of their ad budget on the wrong audiences..." />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Email tone</h3>
+        <p>Pick the style that fits your brand best.</p>
+        <div class="tone-grid" id="tone-grid">
+          <div class="tone-opt selected" data-tone="direct and confident"><div class="tone-name">Direct & Confident</div><div class="tone-desc">Gets to the point fast</div></div>
+          <div class="tone-opt" data-tone="friendly and conversational"><div class="tone-name">Friendly & Conversational</div><div class="tone-desc">Feels like a real person</div></div>
+          <div class="tone-opt" data-tone="data-driven and professional"><div class="tone-name">Data-Driven & Professional</div><div class="tone-desc">Numbers and proof first</div></div>
+          <div class="tone-opt" data-tone="curious and provocative"><div class="tone-name">Curious & Provocative</div><div class="tone-desc">Opens with a bold question</div></div>
+        </div>
+      </div>
+
+      <div id="form-error" class="error-msg hidden"></div>
+      <button class="generate-btn" id="gen-btn" onclick="generateEmails()">⚡ Generate My Cold Emails</button>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="loading hidden">
+      <div class="loading-ring"></div>
+      <h3>Writing your emails...</h3>
+      <p>Crafting 3 variations with subject lines and a follow-up</p>
+    </div>
+
+    <!-- PAYWALL -->
+    <div id="paywall" class="paywall hidden">
+      <h3>You've used your free generations 🎉</h3>
+      <p>You're clearly serious about growing your business. Upgrade to Pro for unlimited email generation, follow-up sequences, and more.</p>
+      <div class="paywall-perks">
+        <span class="perk">Unlimited generations</span>
+        <span class="perk">Follow-up sequences</span>
+        <span class="perk">A/B subject lines</span>
+        <span class="perk">Cancel anytime</span>
+      </div>
+      <button class="btn btn-accent" style="font-size:16px;padding:14px 36px;border-radius:10px" onclick="openCheckout('pro')">Unlock Pro — $29/month →</button>
+      <p style="margin-top:12px;font-size:12px;color:var(--muted)">Secure payment via Stripe · Cancel anytime · Instant access</p>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results" class="hidden">
+      <div class="results-grid" id="emails-output"></div>
+      <div class="results-actions">
+        <button class="btn btn-ghost" onclick="resetForm()">← Generate more</button>
+        <button class="btn btn-accent" onclick="openCheckout('pro')">Upgrade for unlimited →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="mailto:hello@mailforgeai.com">Contact</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <p>© 2025 MailForge AI — Built to help businesses close more deals</p>
+</footer>
+
+<script>
+// TONE SELECTION
+let selectedTone = 'direct and confident';
+document.querySelectorAll('.tone-opt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.tone-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTone = el.dataset.tone;
+  });
+});
+
+// FREE USES
+let usesLeft = parseInt(localStorage.getItem('mailforge_uses') ?? '3');
+document.getElementById('uses-left').textContent = Math.max(0, usesLeft);
+
+async function generateEmails() {
+  const errorEl = document.getElementById('form-error');
+  errorEl.classList.add('hidden');
+
+  if (usesLeft <= 0) {
+    document.getElementById('form-area').classList.add('hidden');
+    document.getElementById('paywall').classList.remove('hidden');
+    return;
+  }
+
+  const offer = document.getElementById('offer').value.trim();
+  const target = document.getElementById('target').value.trim();
+  if (!offer || !target) {
+    errorEl.textContent = 'Please fill in what you offer and who you are targeting.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+
+  const sender = document.getElementById('sender').value || 'our team';
+  const industry = document.getElementById('industry').value;
+  const goal = document.getElementById('goal').value;
+  const pain = document.getElementById('pain').value;
+
+  document.getElementById('form-area').classList.add('hidden');
+  document.getElementById('loading').classList.remove('hidden');
+
+  const prompt = `You are an expert cold email copywriter with a track record of writing emails that get 10-20% reply rates.
+
+Write 3 different cold email variations plus 1 follow-up email for this business:
+
+SENDER: ${sender} (${industry})
+OFFER: ${offer}
+TARGET AUDIENCE: ${target}
+EMAIL GOAL: ${goal}
+PAIN POINT TO MENTION: ${pain || 'not specified — infer a relevant one'}
+TONE: ${selectedTone}
+
+For each email include:
+- A compelling subject line (under 8 words, curiosity-driven)
+- The email body (under 150 words, conversational, no fluff)
+
+Then write 1 follow-up email to send 3 days later if no reply.
+
+Format your response EXACTLY like this for each email:
+
+EMAIL 1
+Subject: [subject line here]
+[email body here]
+
+EMAIL 2
+Subject: [subject line here]
+[email body here]
+
+EMAIL 3
+Subject: [subject line here]
+[email body here]
+
+FOLLOW-UP
+Subject: [subject line here]
+[email body here]
+
+Rules:
+- Never start with "I hope this email finds you well" or similar openers
+- Be specific, not generic
+- One clear call to action per email
+- Sound like a real human, not a robot
+- Keep it SHORT — busy people don't read long emails`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || '';
+
+    usesLeft = Math.max(0, usesLeft - 1);
+    localStorage.setItem('mailforge_uses', usesLeft);
+    document.getElementById('uses-left').textContent = usesLeft;
+
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('results').classList.remove('hidden');
+
+    renderEmails(text);
+  } catch(err) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('form-area').classList.remove('hidden');
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.classList.remove('hidden');
+  }
+}
+
+function renderEmails(text) {
+  const sections = text.split(/\n(?=EMAIL \d|FOLLOW-UP)/i).filter(s => s.trim());
+  const container = document.getElementById('emails-output');
+  container.innerHTML = '';
+
+  sections.forEach((section, i) => {
+    const lines = section.trim().split('\n');
+    const typeRaw = lines[0].trim();
+    const type = typeRaw.toUpperCase().includes('FOLLOW') ? '📬 Follow-up Email' : `✉️ Email Variation ${i + 1}`;
+
+    let subject = '';
+    let body = [];
+    lines.slice(1).forEach(line => {
+      if (line.toLowerCase().startsWith('subject:')) {
+        subject = line.replace(/^subject:\s*/i, '').trim();
+      } else {
+        body.push(line);
+      }
+    });
+
+    const bodyText = body.join('\n').trim();
+    const idx = i;
+
+    const card = document.createElement('div');
+    card.className = 'email-card';
+    card.innerHTML = `
+      <div class="email-card-header">
+        <span class="email-type">${type}</span>
+        <button class="copy-btn" onclick="copyEmail(${idx})">Copy email</button>
+      </div>
+      ${subject ? `<div class="subject-line"><strong>Subject:</strong>${subject}</div>` : ''}
+      <div class="email-body" id="email-body-${idx}">${bodyText}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function copyEmail(idx) {
+  const body = document.getElementById('email-body-' + idx).textContent;
+  navigator.clipboard.writeText(body);
+  const btns = document.querySelectorAll('.copy-btn');
+  if (btns[idx]) {
+    btns[idx].textContent = '✅ Copied!';
+    setTimeout(() => btns[idx].textContent = 'Copy email', 2000);
+  }
+}
+
+function resetForm() {
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('paywall').classList.add('hidden');
+  if (usesLeft > 0) {
+    document.getElementById('form-area').classList.remove('hidden');
+  } else {
+    document.getElementById('paywall').classList.remove('hidden');
+  }
+}
+
+function openCheckout(plan) {
+  // REPLACE THIS with your actual Stripe Payment Link
+  // Go to stripe.com → Payment Links → Create link for $29/month product
+  alert('🚧 Add your Stripe payment link here!\n\nGo to stripe.com, create a $29/month product, generate a Payment Link, and paste the URL here in the openCheckout() function.');
+}
+</script>
+</body>
+</html>
